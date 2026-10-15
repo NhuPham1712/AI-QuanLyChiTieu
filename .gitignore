@@ -1,0 +1,5 @@
+.env
+finbot.db
+__pycache__/
+*.py[cod]
+scratch/

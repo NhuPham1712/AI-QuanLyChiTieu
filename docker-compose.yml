@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db_finance:
+    image: postgres:15-alpine
+    container_name: db_finance_container
+    restart: always
+    environment:
+      POSTGRES_USER: admin_finance
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: finance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  unibot_app:
+    build: .
+    container_name: unibot_finance_container
+    restart: always
+    ports:
+      - "8030:8030"
+    environment:
+      - DATABASE_URL=postgresql://admin_finance:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db_finance:5432/finance_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - db_finance
+
+volumes:
+  postgres_data:
